@@ -248,34 +248,34 @@ choices.bnet
 abi.bdef</code></pre>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- WHY CUSTOM FORMATS -->
-    <!-- ========================================================= -->
+
+    <!-- ✅ Piracy mention added here -->
     <section id="reasons">
       <h2>Why custom file formats exist</h2>
 
       <div class="callout">
         <p>
-          Team Blossom is open source by design. Custom formats help keep the ecosystem sustainable by making it harder
-          to copy-and-repackage full game content as-is.
+          Team Blossom is open source by design, which means the engine and tools are intentionally transparent.
+          However, <strong>game content (assets, maps, dialogue, cutscenes, music, saves)</strong> still represents
+          creative work that can be easily ripped and re-uploaded if it’s stored as plain, universally-readable files.
         </p>
-        <ul>
-          <li>
-            <strong>Asset separation:</strong> code may be open, but content pipelines can still protect original assets.
-          </li>
-          <li>
-            <strong>Controlled decoding:</strong> formats can include validation, version checks, and runtime rules.
-          </li>
-          <li>
-            <strong>Toolchain ownership:</strong> consistent import/export gives stable performance and predictable data.
-          </li>
-          <li>
-            <strong>Modding with boundaries:</strong> you can allow mods via official converters without exposing raw assets.
-          </li>
-        </ul>
+
         <p>
-          This is <strong>not “unbreakable DRM”</strong> — it’s practical friction that protects creators while keeping
-          development open and maintainable.
+          Because of that, Team Blossom uses custom formats primarily as a
+          <strong>practical anti-piracy / anti-repackaging measure</strong>:
+          not to be “unbreakable DRM”, but to add enough friction that someone can copy a folder of assets
+          to the desired source with a legally aquired copy.
+        </p>
+
+        <ul>
+          <li><strong>Prevents “drag-and-drop repacks”:</strong> assets aren’t immediately usable outside the pipeline/Legal copy..</li>
+          <li><strong>Toolchain control:</strong> conversion/import happens through official tools, where rules can apply.</li>
+          <li><strong>Versioned decoding:</strong> formats can enforce compatibility and validation checks.</li>
+          <li><strong>Modding with boundaries:</strong> mods can be supported through converters without exposing raw masters.</li>
+        </ul>
+
+        <p>
+          This keeps the project open source while still protecting original game content from effortless redistribution.
         </p>
       </div>
     </section>
