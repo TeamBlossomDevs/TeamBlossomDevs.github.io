@@ -436,7 +436,7 @@ petal_ir/        (internal compiler phase)</code></pre>
 [Speaker:Narrator]
 Welcome to Millfield.
 
-[Speaker:Alex]
+[Speaker:Lyra]
 So this is the place?
 
 [Choice]
@@ -515,16 +515,17 @@ materials:
 [meta]
 format=bsng
 version=1
-bpm=140
+bpm=184
 
 [loops]
 start=12.000
-end=68.000
+end=134.000
 
 [layers]
 layer0=battle_drums.ogg
 layer1=battle_bass.ogg
 layer2=battle_lead.ogg
+layer3=batte_misc.ogg
 
 [markers]
 hit=14.000
@@ -537,6 +538,7 @@ format=bvid
 version=1
 codec=av1
 audio=opus
+source=intro_cutscene.mp4
 
 [timing]
 fade_in=0.500
@@ -660,7 +662,7 @@ audio:
         <li>Player location (<code>x</code>, <code>y</code>, and map reference)</li>
         <li>Inventory items (+ quantities, optional metadata)</li>
         <li>Party members (who is in the party, order, optional stats)</li>
-        <li>Route selection (numeric route: <code>1</code>, <code>2</code>, <code>3</code>)</li>
+        <li>Area location (numeric areas: <code>rm1</code>, <code>rm2</code>, <code>rm3</code>)</li>
         <li>Flags / story progression bits</li>
         <li>Optional timestamp + playtime counters</li>
       </ul>
@@ -693,32 +695,34 @@ audio:
   },
 
   "party": [
-    { "id": "alex", "hp": 18, "max_hp": 22 },
-    { "id": "ivy", "hp": 12, "max_hp": 18 }
+    { "id": "leo", "hp": 18, "max_hp": 22 },
+    { "id": "lyra", "hp": 12, "max_hp": 18 },
+    { "id": "sirus", "hp": 12, "max_hp": 18 },
   ],
 
   "inventory": [
-    { "id": "potion_small", "qty": 3 },
-    { "id": "key_rusty", "qty": 1, "meta": { "opens": "gate_a" } }
+    { "id": "fire_apple", "qty": 3 },
+    { "id": "broken_key", "qty": 1, "meta": { "opens": "secret_boss_1" } }
   ],
 
   "flags": {
     "met_guard": true,
     "gate_opened": false,
     "took_side_path": true
+    "devils_path": false
   }
 }</code></pre>
 
-      <h3>Route system</h3>
+      <h3>Area system</h3>
       <p>
-        Route is represented as an integer to keep the save format compact and stable:
+        Area is represented as an integer to keep the save format compact and stable:
       </p>
       <pre><code class="language-text">route = 1  -> Route 1
-route = 2  -> Route 2
-route = 3  -> Route 3</code></pre>
+area = 2  -> Room 2
+area = 3  -> Room 3</code></pre>
 
       <p>
-        Route should not be inferred from dialogue or combat outcomes at load time. Save files store the chosen route
+        Area should not be inferred from dialogue or combat outcomes at load time. Save files store the chosen area
         explicitly, while flags track what caused it.
       </p>
     </section>
