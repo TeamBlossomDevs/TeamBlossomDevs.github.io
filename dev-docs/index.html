@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Team Blossom — Documentation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="../styles/style.css" />
+
+  <meta property="og:title" content="Team Blossom — Documentation" />
+  <meta property="og:description" content="Team Blossom core architecture, formats, and naming conventions." />
+  <meta property="og:site_name" content="TeamBlossomDevs.github.io">
+  <meta property="og:type" content="website" />
+  <meta property="og:image"
+    content="https://user-images.githubusercontent.com/22229331/213636577-8983e46c-fbf0-43e3-86e6-4797ae3ef59e.gif" />
+  <meta property="og:url" content="https://TeamBlossomDevs.github.io/" />
+  <meta name="theme-color" content="#ff1cb0">
+
+  <!-- Syntax highlighting (Highlight.js) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/languages/c.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/languages/cpp.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/languages/json.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/languages/ini.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/languages/yaml.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/languages/xml.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/languages/markdown.min.js"></script>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.hljs) hljs.highlightAll();
+    });
+  </script>
+
+  <style>
+    pre code.hljs {
+      border-radius: 12px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      display: block;
+    }
+
+    :not(pre) > code {
+      padding: 0.15em 0.35em;
+      border-radius: 8px;
+    }
+
+    h2, h3 {
+      scroll-margin-top: 84px;
+    }
+
+    .toc a {
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      text-decoration: underline;
+    }
+
+    .callout {
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col">
+
+  <marquee scrolldelay="6" truespeed="true" scrollamount="1" class="text-gray-100">
+    Team Blossom — Documentation (Formats • Toolchain • Naming)
+  </marquee>
+
+  <div class="max-w-5xl w-full mx-auto">
+    <nav class="flex max-sm:flex-col items-center gap-4 py-2 *:no-underline">
+      <a href="https://TeamBlossomDevs.github.io" class="text-gray-50 grow">
+        <i class="i-mdi-home"></i>
+        Team Blossom Homepage
+      </a>
+      <a href="https://github.com/TeamBlossomDevs/" target="_blank" class="text-gray-50">
+        <i class="i-mdi-github"></i>
+        GitHub
+      </a>
+      <a href="https://TeamBlossomDevs.github.io/blog" class="text-gray-50">Blog</a>
+      <a href="#toc" class="text-gray-50">
+        <i class="i-mdi-format-list-bulleted"></i>
+        Contents
+      </a>
+    </nav>
+
+    <marquee class="text-gray-100 my-4">
+      <em>
+        Latest Developer Update post:
+        <a href="https://TeamBlossomDevs.github.io/blog/2025-12-20/index.html">Here!</a>
+      </em>
+    </marquee>
+  </div>
+
+  <main class="max-w-5xl w-full mx-auto prose prose-invert px-2 sm:px-0 leading-6">
+
+    <section>
+      <h1>Team Blossom Documentation</h1>
+      <p>
+        This page defines the core identifiers, file formats, directory layout patterns, and naming conventions
+        used by the <strong>Team Blossom</strong> toolchain.
+      </p>
+      <p>
+        The goal: <strong>short names</strong>, <strong>low collision risk</strong>, and <strong>stable meaning</strong>
+        across the entire engine + tooling ecosystem.
+      </p>
+    </section>
+
+    <section id="toc" class="toc">
+      <h2>Contents</h2>
+      <ul>
+        <li><a href="#core">Core Components</a></li>
+        <li><a href="#formats">All File Formats</a></li>
+        <li><a href="#reasons">Why custom file formats exist</a></li>
+        <li><a href="#layout">Example Directory Layouts</a></li>
+        <li><a href="#toolchain">Toolchain Diagram</a></li>
+        <li><a href="#naming">Naming Conventions</a></li>
+        <li><a href="#samples">Format Samples</a></li>
+        <li><a href="#mapfmt">Map Structure Files</a></li>
+        <li><a href="#savefmt">Save File Structure</a></li>
+      </ul>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- CORE COMPONENTS -->
+    <!-- ========================================================= -->
+    <section id="core">
+      <h2>Core Components</h2>
+
+      <h3><code>blm</code> — GML Translation Layer</h3>
+      <p>
+        <strong>Purpose:</strong> A C-based mapping + runtime bridge between GML and native systems.
+        <br>
+        <strong>Responsibilities:</strong> symbol mapping, ABI compatibility, code emission, runtime bridging.
+      </p>
+      <p><em>Blossom Language Mapping</em></p>
+
+      <h3><code>petal</code> — Unified Programming Language</h3>
+      <p>
+        <strong>Purpose:</strong> Replaces the traditional “C + ASM + GML” combination with a single cohesive language.
+        <br>
+        <strong>Scope:</strong> low-level control, high-level scripting, tooling integration, engine glue.
+      </p>
+
+      <h3><code>.bdef</code> — Shared Headers / Definitions</h3>
+      <p>
+        <strong>Purpose:</strong> ABI-stable declarations and shared interfaces.
+        Used anywhere you would traditionally rely on shared header files.
+      </p>
+
+      <pre><code class="language-text">core.bdef
+math.bdef
+render.bdef
+abi.bdef</code></pre>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- ALL FILE FORMATS -->
+    <!-- ========================================================= -->
+    <section id="formats">
+      <h2>All File Formats</h2>
+
+      <p>
+        These extensions are reserved for Team Blossom usage. Each extension has exactly one meaning.
+        This list includes <strong>every format we defined together</strong>.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Extension / Name</th>
+            <th>Category</th>
+            <th>What it stores</th>
+            <th>Typical location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>blm</code></td>
+            <td>Tool / runtime</td>
+            <td>GML translation layer (C ↔ GML bridge)</td>
+            <td><code>/blm/</code></td>
+          </tr>
+          <tr>
+            <td><code>petal</code></td>
+            <td>Language</td>
+            <td>Unified language replacing C+ASM+GML</td>
+            <td><code>/petal/</code></td>
+          </tr>
+          <tr>
+            <td><code>.bdef</code></td>
+            <td>Definitions</td>
+            <td>Shared declarations, constants, ABI-stable interfaces</td>
+            <td><code>/bdef/</code>, <code>/defs/</code></td>
+          </tr>
+
+          <tr>
+            <td><code>.blsm</code></td>
+            <td>3D Models</td>
+            <td>Meshes, rigs, animations, engine metadata</td>
+            <td><code>/assets/models/</code></td>
+          </tr>
+          <tr>
+            <td><code>.btex</code></td>
+            <td>Textures</td>
+            <td>Texture container (mipmaps, compression, metadata)</td>
+            <td><code>/assets/textures/</code></td>
+          </tr>
+          <tr>
+            <td><code>.bdlg</code></td>
+            <td>Dialogue</td>
+            <td>Plaintext-like dialogue + branching choices + conditions</td>
+            <td><code>/assets/dialogue/</code></td>
+          </tr>
+          <tr>
+            <td><code>.bsng</code></td>
+            <td>Music</td>
+            <td>Song/adaptive music data (loops, layers, markers)</td>
+            <td><code>/assets/music/</code></td>
+          </tr>
+          <tr>
+            <td><code>.bvid</code></td>
+            <td>Video</td>
+            <td>Cutscenes + playback metadata + transitions</td>
+            <td><code>/assets/video/</code></td>
+          </tr>
+          <tr>
+            <td><code>.bnet</code></td>
+            <td>Network / Stats</td>
+            <td>Networked choice state + global percentages + sync</td>
+            <td><code>/network/</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Quick examples</h3>
+      <pre><code class="language-text">player.blsm
+player_diffuse.btex
+intro.bdlg
+battle_theme.bsng
+intro_cutscene.bvid
+choices.bnet
+abi.bdef</code></pre>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- WHY CUSTOM FORMATS -->
+    <!-- ========================================================= -->
+    <section id="reasons">
+      <h2>Why custom file formats exist</h2>
+
+      <div class="callout">
+        <p>
+          Team Blossom is open source by design. Custom formats help keep the ecosystem sustainable by making it harder
+          to copy-and-repackage full game content as-is.
+        </p>
+        <ul>
+          <li>
+            <strong>Asset separation:</strong> code may be open, but content pipelines can still protect original assets.
+          </li>
+          <li>
+            <strong>Controlled decoding:</strong> formats can include validation, version checks, and runtime rules.
+          </li>
+          <li>
+            <strong>Toolchain ownership:</strong> consistent import/export gives stable performance and predictable data.
+          </li>
+          <li>
+            <strong>Modding with boundaries:</strong> you can allow mods via official converters without exposing raw assets.
+          </li>
+        </ul>
+        <p>
+          This is <strong>not “unbreakable DRM”</strong> — it’s practical friction that protects creators while keeping
+          development open and maintainable.
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- EXAMPLE DIRECTORY LAYOUTS -->
+    <!-- ========================================================= -->
+    <section id="layout">
+      <h2>Example Directory Layouts</h2>
+
+      <h3>Engine / Toolchain Repository</h3>
+      <pre><code class="language-text">blossom/
+├── blm/
+│   ├── src/
+│   │   ├── blm_runtime.c
+│   │   ├── blm_emit.c
+│   │   └── blm_abi.c
+│   ├── include/
+│   │   └── blm.h
+│   └── README.md
+│
+├── petal/
+│   ├── compiler/
+│   ├── runtime/
+│   ├── stdlib/
+│   └── README.md
+│
+├── formats/
+│   ├── blsm/
+│   │   ├── spec.md
+│   │   └── examples/
+│   ├── btex/
+│   │   ├── spec.md
+│   │   └── examples/
+│   ├── bdlg/
+│   │   ├── spec.md
+│   │   └── examples/
+│   ├── bsng/
+│   │   ├── spec.md
+│   │   └── examples/
+│   ├── bvid/
+│   │   ├── spec.md
+│   │   └── examples/
+│   └── bnet/
+│       ├── spec.md
+│       └── examples/
+│
+├── bdef/
+│   ├── core.bdef
+│   ├── math.bdef
+│   ├── render.bdef
+│   └── abi.bdef
+│
+└── docs/
+    ├── architecture.md
+    └── naming.md</code></pre>
+
+      <h3>Game Project Repository</h3>
+      <pre><code class="language-text">game/
+├── src/
+│   ├── main.petal
+│   ├── gameplay.petal
+│   └── ai.petal
+│
+├── assets/
+│   ├── maps/
+│   │   └── overworld_a.bmap
+│   ├── models/
+│   │   └── player.blsm
+│   ├── textures/
+│   │   └── player_diffuse.btex
+│   ├── dialogue/
+│   │   └── intro.bdlg
+│   ├── music/
+│   │   └── battle_theme.bsng
+│   └── video/
+│       └── intro.bvid
+│
+├── saves/
+│   └── slot1.bsav
+│
+├── network/
+│   └── choices.bnet
+│
+├── defs/
+│   └── game.bdef
+│
+└── build/</code></pre>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TOOLCHAIN DIAGRAM -->
+    <!-- ========================================================= -->
+    <section id="toolchain">
+      <h2>Toolchain Diagram</h2>
+
+      <pre><code class="language-text">GML
+ │
+ ▼
+blm        (language mapping / ABI bridge)
+ │
+ ▼
+petal      (unified compiler & runtime)
+ │
+ ▼
+Runtime
+ │
+ ├─ .blsm   Models
+ ├─ .btex   Textures
+ ├─ .bmap   Maps
+ ├─ .bdlg   Dialogue
+ ├─ .bsng   Music
+ ├─ .bvid   Video
+ ├─ .bsav   Save files
+ └─ .bnet   Network / Choice State</code></pre>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- NAMING CONVENTIONS -->
+    <!-- ========================================================= -->
+    <section id="naming">
+      <h2>Naming Conventions</h2>
+
+      <h3>General Rules</h3>
+      <ul>
+        <li><strong>Lowercase only</strong> for core identifiers and extensions.</li>
+        <li><strong>No hyphens</strong> in canonical names (use underscores in source files).</li>
+        <li><strong>Short and stable</strong> beats descriptive and trendy.</li>
+        <li><strong>One meaning per extension</strong> — never overload a format name.</li>
+        <li><strong>Prefer subsystem prefixes</strong> for code files to reduce collisions.</li>
+      </ul>
+
+      <h3>Source Files</h3>
+      <pre><code class="language-text">blm_runtime.c
+blm_emit.c
+blm_abi.c
+
+petal_parse.c
+petal_codegen.c
+petal_vm.c</code></pre>
+
+      <h3>Public vs Internal Variants</h3>
+      <pre><code class="language-text">btex_raw/        (dev tooling output)
+bnet_debug/      (internal test fixtures)
+petal_ir/        (internal compiler phase)</code></pre>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- FORMAT SAMPLES -->
+    <!-- ========================================================= -->
+    <section id="samples">
+      <h2>Format Samples</h2>
+
+      <h3><code>.bdlg</code> — Dialogue (plaintext-like)</h3>
+      <pre><code class="language-ini"># intro.bdlg
+@scene intro
+
+[Speaker:Narrator]
+Welcome to Millfield.
+
+[Speaker:Alex]
+So this is the place?
+
+[Choice]
+- "Yeah. Let's go." -> goto start_adventure
+- "Nope. I'm leaving." -> set flag=left_early; goto ending_leave
+
+@if flag=left_early
+[Speaker:Narrator]
+You walked away before it even began.</code></pre>
+
+      <h3><code>.bnet</code> — Network / Choice state</h3>
+      <pre><code class="language-json">{
+  "schema": "bnet",
+  "version": 1,
+  "game_id": "millfield",
+  "session_id": "local:9b2f1d",
+  "choices": {
+    "intro_accept": { "picked": "yes", "timestamp": 1734800000 },
+    "save_farmer": { "picked": "no", "timestamp": 1734800500 }
+  },
+  "global_percentages": {
+    "intro_accept": { "yes": 78.4, "no": 21.6 },
+    "save_farmer": { "yes": 41.2, "no": 58.8 }
+  }
+}</code></pre>
+
+      <h3><code>.bdef</code> — Definitions</h3>
+      <pre><code class="language-c">// core.bdef (example shape)
+#define BLOSSOM_API_VERSION 1
+
+typedef struct {
+  int major;
+  int minor;
+  int patch;
+} BlossomVersion;
+
+typedef struct {
+  unsigned int id;
+  const char* name;
+} BlossomAssetRef;</code></pre>
+
+      <h3><code>.btex</code> — Texture container</h3>
+      <pre><code class="language-yaml"># player_diffuse.btex (example shape)
+format: btex
+version: 1
+encoding: bc7
+mipmaps: true
+srgb: true
+size:
+  width: 2048
+  height: 2048
+source: player_diffuse.png
+notes: "Generated by Blossom pipeline"</code></pre>
+
+      <h3><code>.blsm</code> — Model descriptor</h3>
+      <pre><code class="language-yaml"># player.blsm (example shape)
+format: blsm
+version: 1
+mesh:
+  vertices: 34210
+  indices: 98112
+rig:
+  bones: 74
+animations:
+  - name: idle
+    length: 2.0
+  - name: run
+    length: 1.1
+materials:
+  - name: player_body
+    albedo: player_diffuse.btex
+    normal: player_normal.btex</code></pre>
+
+      <h3><code>.bsng</code> — Music format</h3>
+      <pre><code class="language-ini">; battle_theme.bsng (example shape)
+[meta]
+format=bsng
+version=1
+bpm=140
+
+[loops]
+start=12.000
+end=68.000
+
+[layers]
+layer0=battle_drums.ogg
+layer1=battle_bass.ogg
+layer2=battle_lead.ogg
+
+[markers]
+hit=14.000
+drop=28.000</code></pre>
+
+      <h3><code>.bvid</code> — Video format</h3>
+      <pre><code class="language-ini">; intro_cutscene.bvid (example shape)
+[meta]
+format=bvid
+version=1
+codec=av1
+audio=opus
+
+[timing]
+fade_in=0.500
+fade_out=0.750
+
+[events]
+0.000 = set_ui hidden
+2.500 = play_sfx swoosh
+8.000 = set_ui visible</code></pre>
+
+      <h3><code>blm</code> — Translation layer boundary (C)</h3>
+      <pre><code class="language-c">// blm_runtime.c (example shape)
+#include "blm.h"
+
+int blm_call_gml(const char* func, const char* sig, void* args) {
+  // Resolve symbol in the GML runtime, marshal args, call, return result.
+  // (Implementation depends on target runtime / ABI.)
+  return 0;
+}</code></pre>
+
+      <h3><code>petal</code> — Illustrative pseudo sample</h3>
+      <pre><code class="language-markdown">```petal
+fn main() {
+  let choice = Dialogue.play("intro.bdlg");
+  Network.submit(choice);
+}
+```</code></pre>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MAP FORMAT -->
+    <!-- ========================================================= -->
+    <section id="mapfmt">
+      <h2>Map Structure Files</h2>
+
+      <p>
+        Team Blossom uses <code>.bmap</code> for map structure files. These files describe map layout, object placement,
+        triggers, collisions, and navigation data. The runtime loads <code>.bmap</code> and connects it to dialogue,
+        scripted events, and assets like models/textures.
+      </p>
+
+      <p>
+        <strong>Random example file name:</strong> <code>weaveyard_07a.bmap</code>
+      </p>
+
+      <h3><code>.bmap</code> — What it stores</h3>
+      <ul>
+        <li>Map ID and version</li>
+        <li>Tile layers or chunk layers</li>
+        <li>Collision shapes / navigation data</li>
+        <li>Object instances (NPCs, props, triggers)</li>
+        <li>Links to scenes/dialogue (<code>.bdlg</code>) and music (<code>.bsng</code>)</li>
+        <li>Optional streaming rules (load zones)</li>
+      </ul>
+
+      <h3>Structure concept</h3>
+      <p>
+        Internally, <code>.bmap</code> is intended to be chunk-based:
+      </p>
+      <ul>
+        <li><strong>Header:</strong> magic + version + flags</li>
+        <li><strong>Chunk directory:</strong> offsets/lengths so data can be skipped/streamed</li>
+        <li><strong>Chunks:</strong> each chunk is a typed block (tiles, objects, nav, triggers, etc.)</li>
+      </ul>
+
+      <h3>Example (human-readable shape)</h3>
+      <pre><code class="language-yaml"># weaveyard_07a.bmap (example shape)
+format: bmap
+version: 1
+map_id: weaveyard_07a
+size:
+  width: 160
+  height: 120
+layers:
+  - name: ground
+    type: tile
+    source: weaveyard_ground.tileset
+  - name: deco
+    type: tile
+    source: weaveyard_deco.tileset
+
+collision:
+  type: grid
+  source: weaveyard_collision.bin
+
+objects:
+  - id: npc_guard_01
+    kind: npc
+    x: 34
+    y: 62
+    dialogue: npc_guard.bdlg
+  - id: trigger_gate
+    kind: trigger
+    x: 110
+    y: 40
+    w: 4
+    h: 2
+    on_enter: gate_open
+
+audio:
+  music: ambient_forest.bsng</code></pre>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SAVE FORMAT -->
+    <!-- ========================================================= -->
+    <section id="savefmt">
+      <h2>Save File Structure</h2>
+
+      <p>
+        Team Blossom uses <code>.bsav</code> for save data. Save files are designed to be compact, versioned, and safe
+        to evolve over time without breaking older saves.
+      </p>
+
+      <p>
+        <strong>Random example file name:</strong> <code>slot2_millfield_2f9c.bsav</code>
+      </p>
+
+      <h3><code>.bsav</code> — What it stores</h3>
+      <ul>
+        <li>Player location (<code>x</code>, <code>y</code>, and map reference)</li>
+        <li>Inventory items (+ quantities, optional metadata)</li>
+        <li>Party members (who is in the party, order, optional stats)</li>
+        <li>Route selection (numeric route: <code>1</code>, <code>2</code>, <code>3</code>)</li>
+        <li>Flags / story progression bits</li>
+        <li>Optional timestamp + playtime counters</li>
+      </ul>
+
+      <h3>Structure concept</h3>
+      <p>
+        Internally, <code>.bsav</code> is intended to be chunk-based and versioned, similar to:
+      </p>
+      <ul>
+        <li><strong>Header:</strong> magic + version + checksum</li>
+        <li><strong>Sections:</strong> player, world, inventory, party, route, flags</li>
+        <li><strong>Forward compatibility:</strong> unknown sections are safely skipped</li>
+      </ul>
+
+      <h3>Example (human-readable shape)</h3>
+      <pre><code class="language-json">{
+  "schema": "bsav",
+  "version": 1,
+
+  "slot": 2,
+  "game_id": "millfield",
+  "timestamp": 1734801212,
+  "playtime_seconds": 5420,
+
+  "world": {
+    "map": "weaveyard_07a.bmap",
+    "x": 110,
+    "y": 41,
+    "route": 2
+  },
+
+  "party": [
+    { "id": "alex", "hp": 18, "max_hp": 22 },
+    { "id": "ivy", "hp": 12, "max_hp": 18 }
+  ],
+
+  "inventory": [
+    { "id": "potion_small", "qty": 3 },
+    { "id": "key_rusty", "qty": 1, "meta": { "opens": "gate_a" } }
+  ],
+
+  "flags": {
+    "met_guard": true,
+    "gate_opened": false,
+    "took_side_path": true
+  }
+}</code></pre>
+
+      <h3>Route system</h3>
+      <p>
+        Route is represented as an integer to keep the save format compact and stable:
+      </p>
+      <pre><code class="language-text">route = 1  -> Route 1
+route = 2  -> Route 2
+route = 3  -> Route 3</code></pre>
+
+      <p>
+        Route should not be inferred from dialogue or combat outcomes at load time. Save files store the chosen route
+        explicitly, while flags track what caused it.
+      </p>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SUMMARY -->
+    <!-- ========================================================= -->
+    <section>
+      <h2>Summary</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>blm</code></td><td>GML translation layer (C ↔ GML)</td></tr>
+          <tr><td><code>petal</code></td><td>Unified programming language</td></tr>
+          <tr><td><code>.bdef</code></td><td>Shared definitions / headers</td></tr>
+          <tr><td><code>.blsm</code></td><td>3D models</td></tr>
+          <tr><td><code>.btex</code></td><td>Textures</td></tr>
+          <tr><td><code>.bdlg</code></td><td>Dialogue</td></tr>
+          <tr><td><code>.bsng</code></td><td>Music</td></tr>
+          <tr><td><code>.bvid</code></td><td>Video</td></tr>
+          <tr><td><code>.bnet</code></td><td>Network & choice percentages</td></tr>
+          <tr><td><code>.bmap</code></td><td>Map structure files</td></tr>
+          <tr><td><code>.bsav</code></td><td>Save data (items, location, party, route)</td></tr>
+        </tbody>
+      </table>
+
+      <p><em>Team Blossom — Documentation Standard</em></p>
+    </section>
+
+  </main>
+
+  <footer class="my-8">
+    <div class="flex flex-row justify-center gap-1">
+      <a href="https://www.youtube.com/@TeamUPD"><i class="i-mdi-youtube"></i></a>
+      <a href="https://x.com/BlossomDevs"><i class="i-mdi-twitter"></i></a>
+      <a href="https://github.com/TeamBlossomDevs/"><i class="i-mdi-github"></i></a>
+    </div>
+  </footer>
+
+</body>
+
+</html>
